@@ -37,6 +37,11 @@ describe ActiveRecord::ConnectionAdapters::Mysql2AdapterWithoutLock do
           expect(@adapter_without_lock.lock_none_statement("alter  LOCK=NONE  ")).to eq("")
         end
       end
+      context "with a query that adds a foreign key" do
+        it "doesn't add anything" do
+          expect(@adapter_without_lock.lock_none_statement("alter FOREIGN KEY  ")).to eq("")
+        end
+      end
     end
 
     context "with mysql_online_migrations set to false" do

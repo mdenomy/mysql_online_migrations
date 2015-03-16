@@ -5,6 +5,7 @@ module ActiveRecord
       OPTIMIZABLE_DDL_REGEX = /^(alter|create (unique )? ?index|drop index) /i
       DDL_WITH_COMMA_REGEX = /^alter /i
       DDL_WITH_LOCK_NONE_REGEX = / LOCK=NONE\s*$/i
+      FK_REGEX =  /FOREIGN KEY/i
 
       def initialize(mysql2_adapter, verbose = false)
         @verbose = verbose
@@ -25,6 +26,7 @@ module ActiveRecord
       def lock_none_statement(sql)
         return "" unless ActiveRecord::Base.mysql_online_migrations
         return "" if sql =~ DDL_WITH_LOCK_NONE_REGEX
+        return "" if sql =~ FK_REGEX
         comma_delimiter = (sql =~ DDL_WITH_COMMA_REGEX ? "," : "")
         puts "ONLINE MIGRATION" if @verbose
         "#{comma_delimiter} LOCK=NONE"
